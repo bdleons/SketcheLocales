@@ -70,9 +70,9 @@ function setup() {
     portalOnfbo1.link(portalOnfbo2);
 
     cam1OffPos = fbo1TextPort.treeLocation(/*[0, 0, 0],*/ { from: Tree.CAM, to: Tree.WORLD });
-    cam1Off.camera(cam1OffPos.x,cam1OffPos.y,-cam1OffPos.z, 0,0,0, 0,1,0)
+    cam1Off.camera(cam1OffPos.x,cam1OffPos.y,-cam1OffPos.z-170, 0,0,0, 0,1,0)
     cam2OffPos = fbo2TextPort.treeLocation(/*[0, 0, 0],*/ { from: Tree.CAM, to: Tree.WORLD });
-    cam2Off.camera(cam2OffPos.x,cam2OffPos.y,-cam2OffPos.z, 0,0,0, 0,1,0)
+    cam2Off.camera(cam2OffPos.x,cam2OffPos.y,-cam2OffPos.z-170, 0,0,0, 0,1,0)
 
     document.oncontextmenu = function () { return false; }
     colorMode(RGB, 1);
