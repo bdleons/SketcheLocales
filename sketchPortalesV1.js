@@ -257,12 +257,12 @@ class Portal {
         } else {
             fbo.fill(255, 158, 0)
         }
-        fbo.circle(0, 0, 260)
+        fbo.circle(this.pos.x, this.pos.y, 260)
         fbo.pop()
         if (texElement) {
             fbo.texture(texElement);
         }
-        fbo.circle(0, 0, 250)
+        fbo.circle(this.pos.x, this.pos.y, 250)
         this.portalPos = fbo.treeLocation(/*[0, 0, 0],*/ { from: Tree.MODEL, to: Tree.WORLD });
         fbo.pop()
     }

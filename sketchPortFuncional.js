@@ -1,3 +1,4 @@
+let player;
 let press = 0;
 let angle = 0;
 let kemonaSilver;
@@ -8,13 +9,13 @@ let fox;
 // texture
 let fox_tex;
 
+let angle1 = 0, angle2 = 0;
 let set1 = 0, set2 = 0;
 let starCheck1 = 0, starCheck2 = 0;
 let teleportedFbo1 = false, teleportedFbo2 = true;
-let onCam1 = true, onCam2 = true, onCam1Pov = false, onCam2Pov = false;
-let fbo1, fbo2, fbo1TextPort, fbo2TextPort, dummy;
-let cam1, cam2, cam1Off, cam2Off, cam1Pov, cam2Pov;
-let cam1OffPos, cam2OffPos;
+let fbo1, fbo2, fbo1TextPort, fbo2TextPort;
+let cam1, cam2, cam1Off, cam2Off;
+let cam1Pos, cam2Pos, cam1OffPos, cam2OffPos;
 
 function preload() {
     kemonaSilver = loadImage('images/KemonaPlushSilver.jpg');
@@ -29,7 +30,6 @@ function setup() {
     fbo2 = createGraphics(600, 600, WEBGL);
     fbo1TextPort = createGraphics(600, 600, WEBGL);
     fbo2TextPort = createGraphics(600, 600, WEBGL);
-    dummy = createGraphics(600, 600, WEBGL);
     // FBOs cams
     // cam1 for fbo1 // EasyCam P5
     cam1 = new Dw.EasyCam(fbo1._renderer);
@@ -38,7 +38,7 @@ function setup() {
     cam1.state_reset = state1;   // state to use on reset (double-click/tap)
     cam1.setViewport([0, 0, 600, 600]);
 
-    cam1Pov = fbo1.createCamera(); // LegacyCam P5
+    // cam1 = fbo1.createCamera(); // LegacyCam P5
 
     // cam2 for fbo2 // EasyCam P5
     cam2 = new Dw.EasyCam(fbo2._renderer);
@@ -47,7 +47,14 @@ function setup() {
     cam2.state_reset = state2;   // state to use on reset (double-click/tap)
     cam2.setViewport([600, 0, 600, 600]);
 
-    cam2Pov = fbo2.createCamera(); // LegacyCam P5
+    // cam2 = fbo2.createCamera(); // LegacyCam P5
+
+    // cam3 for fbo3 // EasyCam P5
+    // cam3 = new Dw.EasyCam(fbo3._renderer, { rotation: [0.94, 0.33, 0, 0] });
+    // cam3.attachMouseListeners(this._renderer);
+    // let state3 = cam3.getState();
+    // cam3.state_reset = state3;   // state to use on reset (double-click/tap)
+    // cam3.setViewport([1200, 0, 600, 600]);
 
     cam1Off = fbo1TextPort.createCamera(); // LegacyCam P5
     cam2Off = fbo2TextPort.createCamera(); // LegacyCam P5
@@ -61,9 +68,9 @@ function setup() {
     portalOnfbo1.link(portalOnfbo2);
 
     cam1OffPos = fbo1TextPort.treeLocation(/*[0, 0, 0],*/ { from: Tree.CAM, to: Tree.WORLD });
-    cam1Off.camera(cam1OffPos.x, cam1OffPos.y, -cam1OffPos.z - 170, 0, 0, 0, 0, 1, 0)
+    cam1Off.camera(cam1OffPos.x,cam1OffPos.y,-cam1OffPos.z-160, 0,0,0, 0,1,0)
     cam2OffPos = fbo2TextPort.treeLocation(/*[0, 0, 0],*/ { from: Tree.CAM, to: Tree.WORLD });
-    cam2Off.camera(cam2OffPos.x, cam2OffPos.y, -cam2OffPos.z - 170, 0, 0, 0, 0, 1, 0)
+    cam2Off.camera(cam2OffPos.x,cam2OffPos.y,-cam2OffPos.z-160, 0,0,0, 0,1,0)
 
     document.oncontextmenu = function () { return false; }
     colorMode(RGB, 1);
@@ -132,8 +139,10 @@ function draw() {
     portalOnfbo2.render(fbo2, 1, fbo1TextPort);
 
     if (press) {
-        console.log(cam1.getState());
-        console.log(cam2.getState());
+        // console.log("Accediste a la informacion de los Player1");
+        console.log("Dis Mono 1: " + playerOnfbo1.playerDis);
+        console.log("Angulo Mono 1: " + angle1);
+        console.log("Angulo Mono 2: " + angle2);
         press = 0;
     }
     angle += 0.007
@@ -251,18 +260,18 @@ class Portal {
         fbo.push()
         fbo.translate(this.pos.x, this.pos.y, this.pos.z);
         fbo.push()
-        fbo.translate(0, 0, -1);
+        fbo.translate(this.pos.x, this.pos.y, -1);
         if (numberPortal === 0) {
             fbo.fill(0, 0, 255)
         } else {
             fbo.fill(255, 158, 0)
         }
-        fbo.circle(0, 0, 260)
+        fbo.circle(this.pos.x, this.pos.y, 260)
         fbo.pop()
         if (texElement) {
             fbo.texture(texElement);
         }
-        fbo.circle(0, 0, 250)
+        fbo.circle(this.pos.x, this.pos.y, 250)
         this.portalPos = fbo.treeLocation(/*[0, 0, 0],*/ { from: Tree.MODEL, to: Tree.WORLD });
         fbo.pop()
     }

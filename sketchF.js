@@ -7,7 +7,7 @@ let kemona;
 let fbo1, fbo2, fbo3;
 let cam1, cam2, cam3;
 function preload() {
-    kemona = loadImage('images/KemonaPlush.jpg');
+    kemona = loadImage('images/KemonaPlushSilver.jpg');
 }
 function setup() {
     createCanvas(1800, 600, WEBGL);
@@ -57,7 +57,7 @@ function draw() {
     let cam1POS = fbo1.treeLocation(/*[0, 0, 0],*/ { from: Tree.CAM, to: Tree.WORLD });
     let cam2POS = fbo2.treeLocation(/*[0, 0, 0],*/ { from: Tree.CAM, to: Tree.WORLD });
     let camX = map(mouseX, 0, 700, -200, 200);
-    cam1.camera(camX,0,500, 0,0,0, 0,1,0)
+    cam1.camera(camX,0,500, camX,0,0, 0,1,0)
     cam2.camera(cam1.eyeX,cam1.eyeY,cam1.eyeZ, 0,0,0, 0,1,0)
     if (press) {
         // console.log(cam1.getPosition());

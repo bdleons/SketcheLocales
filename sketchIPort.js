@@ -1,5 +1,4 @@
 let press = 0;
-let relativePosCon, relativePosSubCon, relativePosRot;
 let player;
 let portal1 = null, portal2 = null;
 let portalSpawnPosition, portalSpawnAngle;
@@ -30,13 +29,6 @@ function keyPressed() {
 }
 
 function draw() {
-    if (press) {
-        console.log("Accediste a la informacion");
-        console.log(relativePosCon);
-        console.log(relativePosSubCon);
-        console.log(relativePosRot);
-        press = 0;
-    }
     background("LightGoldenRodYellow");
     if (keyIsDown(LEFT_ARROW))
         player.turn(-1);
@@ -123,9 +115,8 @@ class Portal {
 
     check_(player) {
         const relativePos = player.pos.copy();
-        relativePosCon = relativePos
-        relativePosSubCon = relativePos.sub(this.pos);
-        relativePosRot = relativePos.rotate(-this.a);
+        relativePos.sub(this.pos);
+        relativePos.rotate(-this.a);
         const relativePrevPos = player.prevPos.copy();
         relativePrevPos.sub(this.pos);
         relativePrevPos.rotate(-this.a);

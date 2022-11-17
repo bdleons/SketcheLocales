@@ -7,7 +7,7 @@ let kemona;
 let boxPOS, disPOS;
 function preload() {
     dog = loadImage('images/perro.jpg');
-    kemona = loadImage('images/KemonaPlush.jpg');
+    kemona = loadImage('images/KemonaPlushSilver.jpg');
 }
 function setup() {
     createCanvas(900, 900, WEBGL);
