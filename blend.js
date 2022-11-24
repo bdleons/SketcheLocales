@@ -20,8 +20,36 @@ function setup() {
 }
 function draw() {
     background(0);
-    fill("blue");
+    myShader.setUniform('uMaterial1', [1.0, 1.0, 1.0, 1.0]);
+    myShader.setUniform('uMaterial2', [red(c2.color()), green(c2.color()), blue(c2.color()), 1.0]);
+    beginShape();
+    vertex(0.1, 0.1, 0);
+    vertex(0.1, 0.9, 0);
+    vertex(0.9, 0.9, 0);
+    vertex(0.9, 0.1, 0);
+    endShape();
+    myShader.setUniform('uMaterial1', [red(c1.color()), green(c1.color()), blue(c1.color()), 1.0]);
+    myShader.setUniform('uMaterial2', [1.0, 1.0, 1.0, 1.0]);
+    beginShape();
+    vertex(-0.1, 0.1, 0);
+    vertex(-0.1, 0.9, 0);
+    vertex(-0.9, 0.9, 0);
+    vertex(-0.9, 0.1, 0);
+    endShape();
+    myShader.setUniform('uMaterial1', [red(c1.color()), green(c1.color()), blue(c1.color()), 1.0]);
+    myShader.setUniform('uMaterial2', [1.0, 1.0, 1.0, 1.0]);
+    beginShape();
+    vertex(-0.1, 0.1, 0);
+    vertex(-0.1, 0.9, 0);
+    vertex(-0.9, 0.9, 0);
+    vertex(-0.9, 0.1, 0);
+    endShape();
     myShader.setUniform('uMaterial1', [red(c1.color()), green(c1.color()), blue(c1.color()), 1.0]);
     myShader.setUniform('uMaterial2', [red(c2.color()), green(c2.color()), blue(c2.color()), 1.0]);
-    rect(0.0,0.0,0.2,0.2);
+    beginShape();
+    vertex(0.45, -0.1, 0);
+    vertex(0.45, -0.9, 0);
+    vertex(-0.45, -0.9, 0);
+    vertex(-0.45, -0.1, 0);
+    endShape();
 }
