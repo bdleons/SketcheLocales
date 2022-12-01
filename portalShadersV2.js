@@ -134,7 +134,17 @@ function draw() {
         // // }
     }
 
-    if ((!teleportedFbo1 && !teleportedFbo2) || (teleportedFbo1 && teleportedFbo2)) {
+    if (restart) {
+        set1 = 0;
+        set2 = 0;
+        starCheck1 = 0;
+        starCheck2 = 0;
+        teleportedFbo1 = false;
+        teleportedFbo2 = false;
+        restart = 0;
+    }
+
+    if ((!teleportedFbo1 && !teleportedFbo2)) {
         player1.movement();
         player1.render(fbo1);
 
@@ -164,12 +174,12 @@ function draw() {
             console.log("teleportedFbo2");
         }
 
-        if(set1){
+        if (set1) {
             player1.pos = portal2Onfbo1.portalPos
             set1 = 0;
         }
 
-        if(set2){
+        if (set2) {
             player1.pos = portal1Onfbo1.portalPos
             set2 = 0;
         }
