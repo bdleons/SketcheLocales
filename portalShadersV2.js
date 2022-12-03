@@ -1,11 +1,14 @@
 let press = 0;  // variable get info funcions
 let changeCam = 0; //variable that indicate the position of the camera
 let angle = 0; // angle of rotation of some objects
-let kemonaSilver;
+let kemonaSilver; // Textura del cubo central
 let player1, playerOnPortal1, playerOnPortal2;
 let fbo1, fbo1TextPort1, fbo1TextPort2;
-let portalShader;
+let fbo1Off1, fbo1Off2, fbo1Off3, fbo1Off4, fbo2Off1, fbo2Off2, fbo2Off3, fbo2Off4;
+let portalShader, shader1Aux1, shader1Aux2, shader1Aux3, shader1Aux4, shader2Aux1, shader2Aux2, shader2Aux3, shader2Aux4;
 let portal1Onfbo1, portal2Onfbo1;
+let portal1Onfbo1Off, portal2Onfbo1Off;
+let portal1Off1, portal1Off2, portal1Off3, portal2Off1, portal2Off2, portal2Off3;
 
 // obj models
 let fox;
@@ -18,10 +21,9 @@ let cat2_tex;
 
 let set1 = 0, set2 = 0;
 let starCheck1 = 0, starCheck2 = 0, restart = 0;
-let teleportedFbo1 = false, teleportedFbo2 = false;
+let teleportedFbo1 = false, teleportedFbo2 = true;
 
-let cam1, cam2, cam3, cam4;
-let cam3Pos, cam4Pos;
+let cam1, cam2;
 let onCam1 = true, onCam2 = false;
 let dummy;
 function preload() {
@@ -33,12 +35,28 @@ function preload() {
     cat2_tex = loadImage('models/cat_plush_02.png');
     cat2 = loadModel('models/catPlush.obj', true);
     portalShader = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader1Aux1 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader1Aux2 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader1Aux3 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader1Aux4 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader2Aux1 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader2Aux2 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader2Aux3 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
+    shader2Aux4 = readShader('shaders/portal.frag', { varyings: Tree.NONE });
 }
 function setup() {
     createCanvas(900, 900, WEBGL);
     dummy = createGraphics(1, 1, WEBGL);
     fbo1 = createGraphics(900, 900, WEBGL);
-    fbo2 = createGraphics(900, 900, WEBGL);
+    fbo1Off1 = createGraphics(900, 900, WEBGL);
+    fbo1Off2 = createGraphics(900, 900, WEBGL);
+    fbo1Off3 = createGraphics(900, 900, WEBGL);
+    fbo1Off4 = createGraphics(900, 900, WEBGL);
+    fbo2Off1 = createGraphics(900, 900, WEBGL);
+    fbo2Off2 = createGraphics(900, 900, WEBGL);
+    fbo2Off3 = createGraphics(900, 900, WEBGL);
+    fbo2Off4 = createGraphics(900, 900, WEBGL);
+
     fbo1TextPort1 = createGraphics(900, 900, WEBGL);
     fbo1TextPort2 = createGraphics(900, 900, WEBGL);
 
@@ -48,6 +66,16 @@ function setup() {
     portal1Onfbo1 = new Portal(0, 0, -437, 0);
     portal2Onfbo1 = new Portal(0, 0, 437, PI);
     portal2Onfbo1.link(portal1Onfbo1);
+
+    portal1Onfbo1Off = new Portal(0, 0, -(437 + (1 * 880)), 0);
+    portal1Off1 = new Portal(0, 0, -(437 + (2 * 880)), 0);
+    portal1Off2 = new Portal(0, 0, -(437 + (3 * 880)), 0);
+    portal1Off3 = new Portal(0, 0, -(437 + (4 * 880)), 0);
+    
+    portal2Onfbo1Off = new Portal(0, 0, (437 + (1 * 880)), PI);
+    portal2Off1 = new Portal(0, 0, (437 + (2 * 880)), PI);
+    portal2Off2 = new Portal(0, 0, (437 + (3 * 880)), PI);
+    portal2Off3 = new Portal(0, 0, (437 + (4 * 880)), PI);
 
     cam1 = fbo1.createCamera(); // firts person camera
 
@@ -60,9 +88,7 @@ function setup() {
     let state2 = cam2.getState();
     cam2.state_reset = state2;   // state to use on reset (double-click/tap)
     cam2.setViewport([0, 0, 900, 900]);
-
-    cam3 = fbo1TextPort1.createCamera(); // camera on portal 1
-    cam4 = fbo1TextPort2.createCamera(); // camera on portal 2
+    console.log("XD");
 }
 
 function draw() {
@@ -75,78 +101,100 @@ function draw() {
         center.x, center.y, center.z,
         up.x, up.y, up.z);
 
-    let position1 = fbo1.treeLocation();
-    let center1 = p5.Vector.add(position1, fbo1.treeDisplacement());
-    let up1 = fbo1.treeDisplacement(Tree.j);
+    fbo1TextPort2.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
 
-    fbo1TextPort2.camera(position1.x, position1.y, position1.z,
-        center1.x, center1.y, center1.z,
-        up1.x, up1.y, up1.z);
+    fbo1Off1.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
+    fbo1Off2.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
+    fbo1Off3.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
+    fbo1Off4.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
+    fbo2Off1.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
+    fbo2Off2.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
+    fbo2Off3.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
+    fbo2Off4.camera(position.x, position.y, position.z,
+        center.x, center.y, center.z,
+        up.x, up.y, up.z);
+
     // 2. set scenes
-    scene(fbo1, 0, 0, 1, 1);
-    scene(fbo1TextPort1, 1, 0, 0, 1);
-    scene(fbo1TextPort2, 0, 1, 1, 0);
+    scene(fbo1, 0, 1, 1); // Escena Principal
+
+    scene(fbo1TextPort1, -(1 * 880), 0, 1); // Escena Portal 1 de la escena principal
+    scene(fbo1Off1, -(2 * 880), 0, 1); // Escena Portal 1 de la escena Off 1
+    scene(fbo1Off2, -(3 * 880), 0, 1); // Escena Portal 1 de la escena Off 2
+    scene(fbo1Off3, -(4 * 880), 0, 1); // Escena Portal 1 de la escena Off 3
+    scene(fbo1Off4, -(5 * 880), 0, 1); // Escena Portal 1 de la escena Off 4
+
+    scene(fbo1TextPort2, (1 * 880), 1, 0); // Escena Portal 2 de la escena principal
+    scene(fbo2Off1, (2 * 880), 1, 0); // Escena Portal 2 de la escena Off 1
+    scene(fbo2Off2, (3 * 880), 1, 0); // Escena Portal 2 de la escena Off 2
+    scene(fbo2Off3, (4 * 880), 1, 0); // Escena Portal 2 de la escena Off 3
+    scene(fbo2Off4, (5 * 880), 1, 0); // Escena Portal 2 de la escena Off 4
+ 
+
+    player1.movement();
+    player1.render(fbo1, 0);
 
     if (teleportedFbo1 && !teleportedFbo2) {
-        player1.movement();
-        player1.render(fbo1);
 
-        restart = 1;
-        // if (abs(player1.playerPos.z) < (abs(portal1Onfbo1.portalPos.z) - 40)) {
-        //     starCheck1 = 1;
-        // }
+        if (abs(player1.playerPos.z) < (abs(portal1Onfbo1.portalPos.z) - 40)) {
+            starCheck1 = 1;
+        }
 
-        // if (abs(player1.playerPos.z) < (abs(portal2Onfbo1.portalPos.z) - 40)) {
-        //     starCheck2 = 1;
-        // }
+        if (abs(player1.playerPos.z) < (abs(portal2Onfbo1.portalPos.z) - 40)) {
+            starCheck2 = 1;
+        }
 
-        // if (starCheck1) {
-        //     teleportedFbo1 = portal1Onfbo1.check(player1)
-        // }
+        if (starCheck1) {
+            teleportedFbo1 = portal1Onfbo1.check(player1)
+        }
 
-        // if (starCheck2) {
-        //     teleportedFbo2 = portal2Onfbo1.check(player1)
-        //     console.log("SSSSSSSSSS");
-        // }
+        if (starCheck2) {
+            teleportedFbo2 = portal2Onfbo1.check(player1)
+        }
     }
 
     if (!teleportedFbo1 && teleportedFbo2) {
-        player1.movement();
-        player1.render(fbo1);
 
-        restart = 1;
-        // console.log("KLAJSHKJALHDAD");
+        if (abs(player1.playerPos.z) < (abs(portal1Onfbo1.portalPos.z) - 40)) {
+            starCheck1 = 1;
+        }
 
-        // if (abs(player1.playerPos.z) < (abs(portal1Onfbo1.portalPos.z) - 40)) {
-        //     starCheck1 = 1;
-        // }
+        if (abs(player1.playerPos.z) < (abs(portal2Onfbo1.portalPos.z) - 40)) {
+            starCheck2 = 1;
+        }
 
-        // if (abs(player1.playerPos.z) < (abs(portal2Onfbo1.portalPos.z) - 40)) {
-        //     starCheck2 = 1;
-        // }
+        if (starCheck1) {
+            teleportedFbo1 = portal1Onfbo1.check(player1)
+        }
 
-        // // if (starCheck1) {
-        // //     teleportedFbo1 = portal1Onfbo1.check(player1)
-        // // }
-
-        // // if (starCheck2) {
-        // //     teleportedFbo2 = portal2Onfbo1.check(player1)
-        // // }
-    }
-
-    if (restart) {
-        set1 = 0;
-        set2 = 0;
-        starCheck1 = 0;
-        starCheck2 = 0;
-        teleportedFbo1 = false;
-        teleportedFbo2 = false;
-        restart = 0;
+        if (starCheck2) {
+            teleportedFbo2 = portal2Onfbo1.check(player1)
+        }
     }
 
     if ((!teleportedFbo1 && !teleportedFbo2)) {
-        player1.movement();
-        player1.render(fbo1);
 
         if (abs(player1.playerPos.z) < (abs(portal1Onfbo1.portalPos.z) - 40)) {
             starCheck1 = 1;
@@ -166,39 +214,60 @@ function draw() {
 
         if (teleportedFbo1) {
             set1 = 1;
-            console.log("teleportedFbo1");
         }
 
         if (teleportedFbo2) {
             set2 = 1;
-            console.log("teleportedFbo2");
         }
 
         if (set1) {
-            player1.pos = portal2Onfbo1.portalPos
+            player1.pos = portal2Onfbo1.portalPos;
+            starCheck2 = 0;
             set1 = 0;
         }
 
         if (set2) {
-            player1.pos = portal1Onfbo1.portalPos
+            player1.pos = portal1Onfbo1.portalPos;
+            starCheck1 = 0;
             set2 = 0;
         }
     }
 
+
     if (player1.playerPos != 0) {
         playerOnPortal1.pos = player1.pos
         playerOnPortal1.a = player1.a
-        playerOnPortal1.render(fbo1TextPort1, 1, 0);
+        playerOnPortal1.render(fbo1TextPort1, -(1 * 880));
+        playerOnPortal1.render(fbo1Off1, -(2 * 880));
+        playerOnPortal1.render(fbo1Off2, -(3 * 880));
+        playerOnPortal1.render(fbo1Off3, -(4 * 880));
+        playerOnPortal1.render(fbo1Off4, -(5 * 880));
 
         playerOnPortal2.pos = player1.pos
         playerOnPortal2.a = player1.a
-        playerOnPortal2.render(fbo1TextPort2, 0, 1);
+        playerOnPortal2.render(fbo1TextPort2, (1 * 880));
+        playerOnPortal2.render(fbo2Off1, (2 * 880));
+        playerOnPortal2.render(fbo2Off2, (3 * 880));
+        playerOnPortal2.render(fbo2Off3, (4 * 880));
+        playerOnPortal2.render(fbo2Off4, (5 * 880));
     }
 
 
     angle += 0.007
+
+
+    portal1Off3.render(fbo1Off3, 0, fbo1Off4, shader1Aux4);
+    portal1Off2.render(fbo1Off2, 0, fbo1Off3, shader1Aux3);
+    portal1Off1.render(fbo1Off1, 0, fbo1Off2, shader1Aux2);
+    portal1Onfbo1Off.render(fbo1TextPort1, 0, fbo1Off1, shader1Aux1);
     portal1Onfbo1.render(fbo1, 0, fbo1TextPort1, portalShader);
+
+    portal2Off3.render(fbo2Off3, 1, fbo2Off4, shader2Aux4);
+    portal2Off2.render(fbo2Off2, 1, fbo2Off3, shader2Aux3);
+    portal2Off1.render(fbo2Off1, 1, fbo2Off2, shader2Aux2);
+    portal2Onfbo1Off.render(fbo1TextPort2, 1, fbo2Off1, shader2Aux1);
     portal2Onfbo1.render(fbo1, 1, fbo1TextPort2, portalShader);
+    
     let camCoor = camFovCoordinates(-900, player1.pos, -player1.a, -60, 40);
     cam1.camera(camCoor.xp, camCoor.yp, camCoor.zp, camCoor.xc, camCoor.yc, camCoor.zc, camCoor.xn, camCoor.yn, camCoor.zn)
     if (changeCam) {
@@ -235,7 +304,7 @@ class Player {
         this.a = 0;
         this.speed = 3;
         this.aspeed = PI / 90;
-        this.playerPos = this.pos;
+        this.playerPos = 0;
         this.playerDis = 0;
     }
 
@@ -278,14 +347,9 @@ class Player {
         this.a += dir * this.aspeed;
     }
 
-    render(fbo, fboOff1, fboOff2) {
+    render(fbo, displacement) {
         fbo.push();
-        if (fboOff1) {
-            fbo.translate(0, 0, -870);
-        }
-        if (fboOff2) {
-            fbo.translate(0, 0, 870);
-        }
+        fbo.translate(0, 0, displacement);
         fbo.translate(this.pos.x, this.pos.y, this.pos.z);
         fbo.rotateY(this.a);
         fbo.noStroke();
@@ -294,6 +358,8 @@ class Player {
         fbo.rotateY(HALF_PI);
         fbo.texture(fox_tex);
         fbo.model(fox);
+        this.playerPos = fbo.treeLocation(/*[0, 0, 0],*/ { from: Tree.MODEL, to: Tree.WORLD });
+        this.playerDis = fbo.treeDisplacement(/*[0, 0, 0],*/ { from: Tree.MODEL, to: Tree.WORLD });
         fbo.pop();
         fbo.pop();
     }
@@ -319,9 +385,8 @@ class Portal {
         const relativePrevPos = player.prevPos.copy();
         relativePrevPos.sub(this.portalPos);
         relativePrevPos.rotate(-this.a);
-        if ((abs(relativePos.z) < 28) !== (abs(relativePrevPos.z) < 28) && abs(relativePos.x) < this.len / 2) {
+        if ((abs(relativePos.z) < 38) !== (abs(relativePrevPos.z) < 38) && abs(relativePos.x) < this.len / 2) {
             console.log("Teletransportado");
-            // player.a += this.linkedPortal.a - this.a;
             return true;
         }
         return false;
@@ -345,6 +410,7 @@ class Portal {
         fbo.circle(0, 0, 260)
         fbo.pop()
         if (portalShader) {
+            fbo.resetShader();
             fbo.shader(portalShader);
             fbo.emitResolution(portalShader);
             portalShader.setUniform('texture', texElement);
@@ -358,18 +424,13 @@ class Portal {
         fbo.pop()
     }
 }
-function scene(fbo, fboOff1, fboOff2, frontWall, backWall) {
+function scene(fbo, displacement, frontWall, backWall) {
     fbo.background(120);
     fbo.reset();
     fbo.rectMode(CENTER);
     fbo.noStroke();
     fbo.push();
-    if (fboOff1) {
-        fbo.translate(0, 0, -870);
-    }
-    if (fboOff2) {
-        fbo.translate(0, 0, 870);
-    }
+    fbo.translate(0, 0, displacement);
     fbo.ambientLight(255);
     fbo.push();
     fbo.rotateZ(angle)
